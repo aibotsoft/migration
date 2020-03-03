@@ -1,0 +1,84 @@
+name: workflow
+on: [push]
+
+jobs:
+  build:
+    name: Build-Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: setup go
+        uses: actions/setup-go@v2-beta
+        with:
+          go-version: 1.13
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@master
+
+      - name: Build
+        run: make build
+
+      - name: Deploy
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: make docker_deploy
+
+#      - name: Run
+#        run: make run_build
+#        run: go build -o dist/service src/main.go
+
+#      - name: Docker build
+#        run: make docker_build
+#        run: docker image build -f Dockerfile -t $DOCKER_USERNAME/$GITHUB_WORKFLOW:$GITHUB_RUN_NUMBER .
+#
+#      - name: Docker login
+#        run: make docker_login
+#        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#
+#      - name: Docker push
+#        run: docker image push $DOCKER_USERNAME/$GITHUB_WORKFLOW:$GITHUB_RUN_NUMBER
+
+#  deploy:
+#    env:
+#      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+#      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+#    name: Deploy
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Check out code into the Go module directory
+#        uses: actions/checkout@v2
+#
+#      - name: Download build
+#        uses: actions/download-artifact@v1
+#        with:
+#          name: dist
+#
+#      - name: Docker build
+#        run: docker image build -f Dockerfile -t $DOCKER_USERNAME/$GITHUB_WORKFLOW:$GITHUB_RUN_NUMBER .
+#
+#      - name: Docker login
+#        run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#
+#      - name: Docker push
+#        run: docker image push $DOCKER_USERNAME/$GITHUB_WORKFLOW:$GITHUB_RUN_NUMBER
+
+#      - name: Run ls
+#        run: ls
+#      - name: Check dir
+#        run: |
+#          cd dist
+#          ls
+#      - name: Run
+#        run: ./dist/hello
+#      - name: Check go version
+#        run: go version
+#      - name: Run
+#        run: dist/hello
+
+#      - name: Upload build
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: dist
+#          path: dist/
+          #      CGO_ENABLED: 0
+        #      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
